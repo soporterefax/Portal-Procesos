@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard | Procesos REFAX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon-docs.svg">
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <meta name="theme-color" content="#f58220">
+</head>
+<body>
+  <main class="page">
+    <section class="page-head dashboard-head">
+      <div>
+        <div class="eyebrow">👋 Bienvenida al portal</div>
+        <h1 id="dashboardGreeting">Hola</h1>
+        <div id="dashboardUserBadge" class="welcome-user-badge">Usuario: --</div>
+      </div>
+      <div class="page-head-actions">
+        <a class="btn btn-secondary" href="reportes.html">Ver reportes</a>
+      </div>
+    </section>
+
+    <div id="msg" hidden></div>
+
+    <section class="metrics">
+      <div class="metric">Áreas<strong id="kAreas">-</strong></div>
+      <div class="metric">Procesos<strong id="kProcesos">-</strong></div>
+      <div class="metric">Procesos críticos<strong id="kCriticos">-</strong></div>
+      <div class="metric">Documentos<strong id="kDocumentos">-</strong></div>
+    </section>
+
+    <section id="dashboardSync" class="panel admin-only" hidden style="margin-bottom:18px">
+      <div class="panel-header" style="margin-bottom:0">
+        <div>
+          <h3>Última sincronización</h3>
+          <div id="dashboardSyncText" class="panel-desc" style="margin-bottom:0">Consultando...</div>
+        </div>
+        <a class="btn btn-secondary btn-sm" href="sincronizacion.html">Ver sincronización</a>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Procesos por área</h3>
+          </div>
+        </div>
+        <div id="areasBars" class="bars"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Procesos críticos recientes</h3>
+          </div>
+        </div>
+        <div id="criticos" class="quick-list"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="panel-header">
+        <div>
+          <h3>Procesos recientes</h3>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Proceso</th>
+              <th>Área</th>
+              <th>Tipo</th>
+              <th>Crítico</th>
+            </tr>
+          </thead>
+          <tbody id="recentes"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

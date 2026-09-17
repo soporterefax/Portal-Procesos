@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+backend/instance/
+.DS_Store
+backend/.env
+backend/procesos.db

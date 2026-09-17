@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sincronización | REFAX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon-docs.svg">
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <meta name="theme-color" content="#f58220">
+</head>
+<body>
+  <main class="page">
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">↻ Fuente de datos</div>
+        <h1>Sincronización</h1>
+      </div>
+      <div class="page-head-actions">
+        <button id="syncBtn" class="btn btn-primary" type="button">↻ Actualizar desde OneDrive</button>
+      </div>
+    </section>
+
+    <div id="msg" hidden></div>
+
+    <section class="page-stats sync-stats">
+      <div class="stat-card">
+        <div class="stat-label">Estado de conexión</div>
+        <strong id="graphStatus">-</strong>
+        <div id="graphStatusSub" class="stat-sub">Comprobando Microsoft Graph...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Última sincronización</div>
+        <strong id="lastSyncDate" class="sync-date">-</strong>
+        <div id="lastSyncUser" class="stat-sub">Sin historial todavía</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Archivo fuente</div>
+        <strong id="sourceFile" class="sync-file">-</strong>
+        <div id="sourceModified" class="stat-sub">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Último resultado</div>
+        <strong id="lastSyncStatus">-</strong>
+        <div id="lastSyncMessage" class="stat-sub">-</div>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Fuente configurada</h3>
+          </div>
+        </div>
+        <div class="sync-source-card">
+          <div class="sync-source-icon">☁</div>
+          <div>
+            <strong>Microsoft OneDrive / SharePoint</strong>
+            <div id="sourceUrl" class="muted">Consultando archivo...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Resultado de la última carga</h3>
+          </div>
+        </div>
+        <div id="syncResult" class="sync-result">
+          <div class="empty">Aún no hay una sincronización registrada.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="panel-header">
+        <div>
+          <h3>Cómo funciona</h3>
+        </div>
+      </div>
+      <div class="sync-flow">
+        <div><span>1</span><b>OneDrive / SharePoint</b><small>El administrador actualiza el Excel fuente.</small></div>
+        <div><span>2</span><b>Microsoft Graph</b><small>El portal descarga el archivo autorizado.</small></div>
+        <div><span>3</span><b>Importación</b><small>Se validan Áreas, Procesos y Documentos.</small></div>
+        <div><span>4</span><b>Azure MySQL</b><small>Los registros se crean o actualizan sin duplicarse.</small></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/sincronizacion.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reportes | REFAX</title>
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon-docs.svg">
+  <meta name="theme-color" content="#f58220">
+</head>
+<body>
+  <main class="page">
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">📊</div>
+        <h1>Reportes</h1>
+        
+      </div>
+      <div class="page-head-actions">
+        <button class="btn btn-secondary" onclick="window.print()">Imprimir / PDF</button>
+      </div>
+    </section>
+
+    <div id="msg" hidden></div>
+
+    <section class="metrics">
+      <div class="metric">Áreas<strong id="a">-</strong></div>
+      <div class="metric">Procesos<strong id="p">-</strong></div>
+      <div class="metric">Críticos<strong id="c">-</strong></div>
+      <div class="metric">Documentos<strong id="d">-</strong></div>
+    </section>
+
+    <section class="grid2">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Procesos por área</h3>
+          </div>
+        </div>
+        <div id="pa" class="bars"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Documentos por tipo</h3>
+          </div>
+        </div>
+        <div id="dt" class="bars"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="panel-header">
+        <div>
+          <h3>Procesos por tipo</h3>
+        </div>
+      </div>
+      <div id="pt" class="bars"></div>
+    </section>
+  </main>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/reportes.js"></script>
+</body>
+</html>

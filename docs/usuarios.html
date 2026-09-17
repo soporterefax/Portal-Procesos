@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuarios | Procesos REFAX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon-docs.svg">
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <meta name="theme-color" content="#f58220">
+</head>
+<body>
+  <main class="page">
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">👥 Gestión de accesos</div>
+        <h1>Usuarios</h1>
+        
+      </div>
+      <div class="page-head-actions">
+        <button class="btn btn-primary" onclick="openUserForm()">+ Nuevo usuario</button>
+      </div>
+    </section>
+
+    <div id="msg" hidden></div>
+
+    <section class="page-stats">
+      <div class="stat-card"><div class="stat-label">Usuarios totales</div><strong id="usersTotal">-</strong><div class="stat-sub">Registros disponibles en el portal</div></div>
+      <div class="stat-card"><div class="stat-label">Administradores</div><strong id="usersAdmins">-</strong><div class="stat-sub">Con acceso completo al sistema</div></div>
+      <div class="stat-card"><div class="stat-label">Usuarios</div><strong id="usersLectura">-</strong><div class="stat-sub">Con acceso de solo visualización</div></div>
+      <div class="stat-card"><div class="stat-label">Inactivos</div><strong id="usersInactive">-</strong><div class="stat-sub">Cuentas deshabilitadas</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h3>Listado de usuarios</h3>
+          <div class="panel-desc">Busca usuarios por nombre, usuario o perfil y administra su acceso al portal.</div>
+        </div>
+      </div>
+      <div class="filters filters-simple">
+        <input id="userSearch" class="input" placeholder="Buscar por nombre, usuario o perfil...">
+        <button class="btn btn-secondary" onclick="loadUsers()">Buscar</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Usuario</th>
+              <th>Perfil</th>
+              <th>Estado</th>
+              <th>Contraseña</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="userRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="userModal" class="modal" hidden>
+    <div class="modal-card modal-sm">
+      <h2 id="userFormTitle">Nuevo usuario</h2>
+      <form id="userForm" class="form-grid">
+        <input id="user_id" type="hidden">
+        <label class="full">Nombre
+          <input id="user_nombre" class="input" required maxlength="150">
+        </label>
+        <label>Usuario
+          <input id="user_username" class="input" required maxlength="80" autocomplete="off">
+        </label>
+        <label>Rol
+          <select id="user_rol">
+            <option value="usuario">Usuario</option>
+            <option value="administrador">Administrador</option>
+          </select>
+        </label>
+        <label id="createPasswordField" class="full">Contraseña inicial
+          <input id="user_password" class="input" type="password" minlength="8" autocomplete="new-password">
+          <small class="muted">Mínimo 8 caracteres. El usuario no podrá cambiarla desde el portal.</small>
+        </label>
+        <div class="full toolbar">
+          <button class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" onclick="closeUserForm()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="passwordModal" class="modal" hidden>
+    <div class="modal-card modal-sm">
+      <h2>Asignar nueva contraseña</h2>
+      <p class="muted">Usuario: <b id="password_username"></b></p>
+      <form id="passwordForm">
+        <label>Nueva contraseña
+          <input id="new_password" class="input" type="password" minlength="8" required autocomplete="new-password">
+        </label>
+        <div class="toolbar" style="margin-top:16px">
+          <button class="btn btn-primary">Actualizar contraseña</button>
+          <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="credentialModal" class="modal" hidden>
+    <div class="modal-card credential-card">
+      <div class="credential-icon">🔐</div>
+      <h2>Credenciales asignadas</h2>
+      <p class="muted">La contraseña no podrá consultarse después.</p>
+      <div class="credential-box">
+        <div><span>Usuario</span><strong id="credential_user"></strong></div>
+        <div><span>Contraseña</span><strong id="credential_password"></strong></div>
+      </div>
+      <div class="toolbar credential-actions">
+        <button class="btn btn-primary" type="button" onclick="copyCredential()">Copiar credenciales</button>
+        <button class="btn btn-secondary" type="button" onclick="closeCredentialModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/usuarios.js"></script>
+</body>
+</html>
