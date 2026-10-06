@@ -29,6 +29,8 @@ def full(documento):
             "nombre": documento.proceso.nombre,
             "area_id": documento.proceso.area_id,
             "area": documento.proceso.area.to_dict() if documento.proceso.area else None,
+            "estado": documento.proceso.estado,
+            "es_critico": bool(documento.proceso.es_critico),
         }
         if documento.proceso
         else None
@@ -44,7 +46,10 @@ def listar():
     tipo = (request.args.get("tipo") or "").strip()
     area_id = request.args.get("area_id", type=int)
     estado = (request.args.get("estado") or "").strip()
-    query = Documento.query.options(selectinload(Documento.proceso)).join(Proceso)
+    critico = (request.args.get("critico") or "").strip().lower()
+    query = Documento.query.options(
+        selectinload(Documento.proceso).selectinload(Proceso.area)
+    ).join(Proceso)
     if proceso_id:
         query = query.filter(Documento.proceso_id == proceso_id)
     if area_id:
@@ -53,6 +58,10 @@ def listar():
         query = query.filter(func.lower(Documento.tipo) == tipo.lower())
     if estado:
         query = query.filter(func.lower(Documento.estado) == estado.lower())
+    if critico in ("1", "true", "si", "sí"):
+        query = query.filter(Proceso.es_critico.is_(True))
+    if critico in ("0", "false", "no"):
+        query = query.filter(Proceso.es_critico.is_(False))
     if q:
         patron = f"%{q}%"
         query = query.filter(
@@ -84,7 +93,13 @@ def meta():
     return jsonify(
         {
             "procesos": [
-                {"id": p.id, "codigo": p.codigo, "nombre": p.nombre}
+                {
+                    "id": p.id,
+                    "codigo": p.codigo,
+                    "nombre": p.nombre,
+                    "estado": p.estado,
+                    "es_critico": bool(p.es_critico),
+                }
                 for p in procesos
             ],
             "tipos": tipos,

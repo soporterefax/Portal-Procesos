@@ -41,6 +41,7 @@ const PAGE_META = {
   guias: { title: "Guías", section: "Documentación" },
   manuales: { title: "Manuales", section: "Documentación" },
   politicas: { title: "Políticas", section: "Documentación" },
+  criticos: { title: "Críticos", section: "Críticos" },
   reportes: { title: "Reportes", section: "Gestión" },
   usuarios: { title: "Usuarios", section: "Administración" },
   sincronizacion: { title: "Sincronización", section: "Administración" },
@@ -137,6 +138,12 @@ async function initLayout(active) {
             <a href="guias.html" data-key="guias" title="Guías"><span class="nav-icon">⌁</span><span class="nav-label">Guías</span></a>
             <a href="manuales.html" data-key="manuales" title="Manuales"><span class="nav-icon">▣</span><span class="nav-label">Manuales</span></a>
             <a href="politicas.html" data-key="politicas" title="Políticas"><span class="nav-icon">◆</span><span class="nav-label">Políticas</span></a>
+          </nav>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Críticos</div>
+          <nav>
+            <a href="criticos.html" data-key="criticos" title="Críticos"><span class="nav-icon">⚠</span><span class="nav-label">Críticos</span></a>
           </nav>
         </div>
         ${adminLink}

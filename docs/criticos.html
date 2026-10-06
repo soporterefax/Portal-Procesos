@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Críticos | REFAX</title>
+  <link rel="stylesheet" href="assets/css/estilos.css">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon-docs.svg">
+  <meta name="theme-color" content="#f58220">
+</head>
+<body>
+  <main class="page">
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">⚠ Seguimiento prioritario</div>
+        <h1>Críticos</h1>
+      </div>
+    </section>
+
+    <div id="msg" hidden></div>
+
+    <section class="metrics" style="margin-bottom:18px">
+      <div class="metric">Procesos críticos<strong id="kProcesosCriticos">-</strong></div>
+      <div class="metric">Manuales críticos<strong id="kManualesCriticos">-</strong></div>
+      <div class="metric">Políticas críticas<strong id="kPoliticasCriticas">-</strong></div>
+    </section>
+
+    <section class="panel">
+      <div class="filters filters-content">
+        <input id="q" class="input" placeholder="Buscar por nombre, código o documento...">
+        <select id="areaFilter">
+          <option value="">Todas las áreas</option>
+        </select>
+        <div></div>
+        <button class="btn btn-secondary" type="button" onclick="loadAll()">Filtrar</button>
+      </div>
+
+      <div class="toolbar" style="justify-content:flex-start;margin-bottom:18px">
+        <button id="tabProcesos" class="btn btn-primary" type="button" onclick="showTab('procesos')">Procesos críticos</button>
+        <button id="tabManuales" class="btn btn-secondary" type="button" onclick="showTab('manuales')">Manuales críticos</button>
+        <button id="tabPoliticas" class="btn btn-secondary" type="button" onclick="showTab('politicas')">Políticas críticas</button>
+      </div>
+
+      <div id="panelProcesos">
+        <div class="table-wrap compact-table-wrap">
+          <table class="table compact-table">
+            <thead><tr><th>Proceso</th><th>Área</th><th>Estado</th><th>Archivos</th></tr></thead>
+            <tbody id="rowsProcesos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="panelManuales" hidden>
+        <div class="table-wrap compact-table-wrap">
+          <table class="table compact-table">
+            <thead><tr><th>Manual</th><th>Proceso</th><th>Área</th><th>Estado</th><th>Archivos</th></tr></thead>
+            <tbody id="rowsManuales"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="panelPoliticas" hidden>
+        <div class="table-wrap compact-table-wrap">
+          <table class="table compact-table">
+            <thead><tr><th>Política</th><th>Proceso</th><th>Área</th><th>Estado</th><th>Archivos</th></tr></thead>
+            <tbody id="rowsPoliticas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/files-modal.js"></script>
+  <script src="assets/js/criticos.js"></script>
+</body>
+</html>
