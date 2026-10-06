@@ -27,18 +27,36 @@ function applyDashboardGreeting(user) {
 }
 async function loadDashboardSync(user) {
   if (user.rol !== "administrador") return;
+
+  const dashboardSync =
+    document.getElementById("dashboardSync");
+
+  const dashboardSyncText =
+    document.getElementById("dashboardSyncText");
+
+  if (!dashboardSync || !dashboardSyncText) return;
+
   try {
-    const sync = await apiGet("/api/sincronizacion?check_graph=0");
+    const sync =
+      await apiGet("/api/sincronizacion?check_graph=0");
+
     dashboardSync.hidden = false;
+
     const last = sync.ultima;
+
     if (last) {
-      const who = last.usuario?.nombre || last.usuario?.username || "Administrador";
-      dashboardSyncText.textContent = `${formatSyncDate(last.finalizado_en || last.iniciado_en)} · ${last.estado} · ${who}`;
+      const who =
+        last.usuario?.nombre ||
+        last.usuario?.username ||
+        "Administrador";
+
+      dashboardSyncText.textContent =
+        `${formatSyncDate(last.finalizado_en || last.iniciado_en)} · ${last.estado} · ${who}`;
     } else {
-      dashboardSyncText.textContent = "Aún no se ha ejecutado una sincronización desde OneDrive/SharePoint.";
+      dashboardSyncText.textContent =
+        "Aún no se ha ejecutado una sincronización desde OneDrive/SharePoint.";
     }
   } catch (_) {
-    // La sincronización es informativa y nunca debe bloquear el Dashboard.
     dashboardSync.hidden = true;
   }
 }
@@ -53,6 +71,14 @@ async function loadDashboardSync(user) {
   loadDashboardSync(user);
   try {
     const data = await apiGet("/api/dashboard");
+    const kAreas = document.getElementById("kAreas");
+    const kProcesos = document.getElementById("kProcesos");
+    const kCriticos = document.getElementById("kCriticos");
+    const kDocumentos = document.getElementById("kDocumentos");
+
+    const areasBars = document.getElementById("areasBars");
+    const criticos = document.getElementById("criticos");
+    const recientes = document.getElementById("recentes");
 
     kAreas.textContent = data.kpis.areas;
     kProcesos.textContent = data.kpis.procesos;
