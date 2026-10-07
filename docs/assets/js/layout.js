@@ -141,9 +141,9 @@ async function initLayout(active) {
           </nav>
         </div>
         <div class="nav-section">
-          <div class="nav-section-title">Procesos Críticos</div>
+          <div class="nav-section-title">PROCESOS CRÍTICOS</div>
           <nav>
-            <a href="criticos.html" data-key="criticos" title="Procesos Críticos"><span class="nav-icon">⚠</span><span class="nav-label">Procesos Críticos</span></a>
+            <a href="criticos.html" data-key="criticos" title="Procesos críticos"><span class="nav-icon">⚠</span><span class="nav-label">Procesos críticos</span></a>
           </nav>
         </div>
         ${adminLink}
