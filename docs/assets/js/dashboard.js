@@ -50,6 +50,8 @@ async function loadDashboardSync(user) {
         last.usuario?.username ||
         "Administrador";
 
+
+        
       dashboardSyncText.textContent =
         `${formatSyncDate(last.finalizado_en || last.iniciado_en)} · ${last.estado} · ${who}`;
     } else {
