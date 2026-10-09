@@ -3,9 +3,9 @@ from __future__ import annotations
 import os
 import tempfile
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
-from flask import current_app
 
 
 GRAPH_SCOPE = "https://graph.microsoft.com/.default"
@@ -18,8 +18,12 @@ class GraphConfigError(RuntimeError):
 
 def _env(name: str, required: bool = True) -> str:
     value = (os.getenv(name) or "").strip()
+
     if required and not value:
-        raise GraphConfigError(f"Falta configurar {name} en las variables de entorno.")
+        raise GraphConfigError(
+            f"Falta configurar {name} en las variables de entorno."
+        )
+
     return value
 
 
@@ -38,21 +42,65 @@ def obtener_token() -> str:
         },
         timeout=20,
     )
+
     if not response.ok:
         raise RuntimeError(
-            f"No se pudo obtener token de Microsoft Graph (HTTP {response.status_code})."
+            f"No se pudo obtener token de Microsoft Graph "
+            f"(HTTP {response.status_code})."
         )
+
     data = response.json()
     token = data.get("access_token")
+
     if not token:
-        raise RuntimeError("Microsoft Graph no devolvió un access_token.")
+        raise RuntimeError(
+            "Microsoft Graph no devolvió un access_token."
+        )
+
     return token
 
 
 def _item_endpoint() -> tuple[str, str]:
+    """
+    Obtiene los endpoints de metadata y descarga del Excel.
+
+    Prioridad:
+    1. GRAPH_FILE_PATH
+    2. GRAPH_ITEM_ID
+
+    Esto permite que el portal use una ruta fija en SharePoint
+    aunque GRAPH_ITEM_ID todavía exista en Azure.
+    """
+
     drive_id = _env("GRAPH_DRIVE_ID")
-    item_id = _env("GRAPH_ITEM_ID", required=False)
-    file_path = _env("GRAPH_FILE_PATH", required=False).strip("/")
+
+    file_path = _env(
+        "GRAPH_FILE_PATH",
+        required=False,
+    ).strip("/")
+
+    item_id = _env(
+        "GRAPH_ITEM_ID",
+        required=False,
+    )
+
+    # ----------------------------------------
+    # OPCIÓN PRINCIPAL: archivo por ruta
+    # ----------------------------------------
+
+    if file_path:
+        # Codificamos espacios, tildes y caracteres especiales,
+        # pero conservamos "/" para respetar las carpetas.
+        encoded_path = quote(file_path, safe="/")
+
+        return (
+            f"{GRAPH_BASE}/drives/{drive_id}/root:/{encoded_path}",
+            f"{GRAPH_BASE}/drives/{drive_id}/root:/{encoded_path}:/content",
+        )
+
+    # ----------------------------------------
+    # RESPALDO: archivo por Item ID
+    # ----------------------------------------
 
     if item_id:
         return (
@@ -60,60 +108,97 @@ def _item_endpoint() -> tuple[str, str]:
             f"{GRAPH_BASE}/drives/{drive_id}/items/{item_id}/content",
         )
 
-    if file_path:
-        return (
-            f"{GRAPH_BASE}/drives/{drive_id}/root:/{file_path}",
-            f"{GRAPH_BASE}/drives/{drive_id}/root:/{file_path}:/content",
-        )
-
     raise GraphConfigError(
-        "Configura GRAPH_ITEM_ID o GRAPH_FILE_PATH para identificar el Excel de procesos."
+        "Configura GRAPH_FILE_PATH o GRAPH_ITEM_ID "
+        "para identificar el Excel de procesos."
     )
 
 
-def obtener_metadatos_archivo(token: str | None = None) -> dict:
+def obtener_metadatos_archivo(
+    token: str | None = None,
+) -> dict:
+
     token = token or obtener_token()
+
     meta_url, _ = _item_endpoint()
+
     response = requests.get(
         meta_url,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
         timeout=20,
     )
+
     if not response.ok:
         raise RuntimeError(
-            f"No se pudo consultar el archivo en Microsoft Graph (HTTP {response.status_code})."
+            f"No se pudo consultar el archivo en Microsoft Graph "
+            f"(HTTP {response.status_code}). "
+            f"Respuesta: {response.text[:300]}"
         )
+
     data = response.json()
+
     return {
         "id": data.get("id"),
         "name": data.get("name"),
         "webUrl": data.get("webUrl"),
-        "lastModifiedDateTime": data.get("lastModifiedDateTime"),
+        "lastModifiedDateTime": data.get(
+            "lastModifiedDateTime"
+        ),
         "size": data.get("size"),
+        "parentPath": (
+            data.get("parentReference", {})
+            .get("path")
+        ),
     }
 
 
 def descargar_excel_temporal() -> tuple[Path, dict]:
     token = obtener_token()
+
     metadata = obtener_metadatos_archivo(token)
+
     _, content_url = _item_endpoint()
 
     response = requests.get(
         content_url,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={
+            "Authorization": f"Bearer {token}",
+        },
         timeout=(20, 90),
         allow_redirects=True,
     )
+
     if not response.ok:
         raise RuntimeError(
-            f"No se pudo descargar el Excel desde Microsoft Graph (HTTP {response.status_code})."
+            f"No se pudo descargar el Excel desde Microsoft Graph "
+            f"(HTTP {response.status_code}). "
+            f"Respuesta: {response.text[:300]}"
         )
 
-    filename = metadata.get("name") or os.getenv("GRAPH_FILE_NAME") or "Plantilla_Procesos_Refax.xlsx"
-    if not filename.lower().endswith(".xlsx"):
-        raise RuntimeError("El archivo configurado en Microsoft Graph no es un Excel .xlsx.")
+    filename = (
+        metadata.get("name")
+        or os.getenv("GRAPH_FILE_NAME")
+        or "Plantilla_Procesos_Refax.xlsx"
+    )
 
-    temp_dir = Path(tempfile.mkdtemp(prefix="portal-procesos-sync-"))
+    if not filename.lower().endswith(".xlsx"):
+        raise RuntimeError(
+            "El archivo configurado en Microsoft Graph "
+            "no es un Excel .xlsx."
+        )
+
+    temp_dir = Path(
+        tempfile.mkdtemp(
+            prefix="portal-procesos-sync-"
+        )
+    )
+
     temp_path = temp_dir / filename
-    temp_path.write_bytes(response.content)
+
+    temp_path.write_bytes(
+        response.content
+    )
+
     return temp_path, metadata
