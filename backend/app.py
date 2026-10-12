@@ -67,9 +67,13 @@ def create_app():
     @app.cli.command("import-excel")
     @click.option(
         "--archivo",
-        type=click.Path(exists=True, dir_okay=False, path_type=str),
-        default=None,
-        help="Ruta opcional a un Excel .xlsx. Si se omite usa backend/data/Plantilla_Procesos_Refax.xlsx.",
+        type=click.Path(
+            exists=True,
+            dir_okay=False,
+            path_type=str,
+        ),
+        required=True,
+        help="Ruta del archivo Excel .xlsx que se desea importar.",
     )
     def import_excel_command(archivo):
         """Importa o actualiza Áreas, Procesos y Documentos desde Excel."""

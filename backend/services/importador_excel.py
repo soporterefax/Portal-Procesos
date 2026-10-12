@@ -10,12 +10,6 @@ from extensions import db
 from models import Area, Documento, Proceso
 
 
-RUTA_EXCEL_DEFAULT = (
-    Path(__file__).resolve().parent.parent
-    / "data"
-    / "Plantilla_Procesos_Refax.xlsx"
-)
-
 HOJAS_REQUERIDAS = {"AREAS", "PROCESOS", "DOCUMENTOS"}
 
 COLUMNAS_AREAS = {
@@ -258,8 +252,14 @@ def importar_documentos(filas):
     return creados, actualizados, omitidos
 
 
-def importar_excel(ruta_excel=None):
-    ruta = Path(ruta_excel) if ruta_excel else RUTA_EXCEL_DEFAULT
+def importar_excel(ruta_excel):
+    if not ruta_excel:
+        raise ValueError(
+            "Debes indicar la ruta del archivo Excel que deseas importar."
+        )
+
+    ruta = Path(ruta_excel)
+
     if not ruta.exists():
         raise FileNotFoundError(f"No se encontró el Excel: {ruta}")
 

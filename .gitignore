@@ -7,3 +7,8 @@ backend/instance/
 .DS_Store
 backend/.env
 backend/procesos.db
+
+# Archivos de datos internos
+backend/data/*.xlsx
+backend/data/*.xls
+backend/data/*.csv
