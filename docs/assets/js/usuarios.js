@@ -18,8 +18,48 @@ function closePasswordModal() {
 
 function closeCredentialModal() {
   credentialModal.hidden = true;
+
+  credential_user.textContent = "";
+  credential_password.textContent = "";
 }
 
+
+function showAssignedCredential(
+  user,
+  password
+) {
+  credential_user.textContent =
+    user.username;
+
+  credential_password.textContent =
+    password;
+
+  credentialModal.hidden = false;
+}
+
+
+async function copyCredential() {
+  const text =
+    `Usuario: ${credential_user.textContent}\n` +
+    `Contraseña: ${credential_password.textContent}`;
+
+  try {
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    showMsg(
+      "Credenciales copiadas"
+    );
+  }
+
+  catch (_) {
+    showMsg(
+      "No se pudo copiar automáticamente",
+      "error"
+    );
+  }
+}
 
 /* =========================================================
    FORMULARIO DE USUARIO
@@ -71,43 +111,6 @@ function openPasswordForm(userId) {
     () => new_password.focus(),
     50
   );
-}
-
-
-function showAssignedCredential(
-  user,
-  password
-) {
-  credential_user.textContent =
-    user.username;
-
-  credential_password.textContent =
-    password;
-
-  credentialModal.hidden = false;
-}
-
-
-async function copyCredential() {
-  const text =
-    `Usuario: ${credential_user.textContent}\n` +
-    `Contraseña: ${credential_password.textContent}`;
-
-  try {
-    await navigator.clipboard.writeText(
-      text
-    );
-
-    showMsg(
-      "Credenciales copiadas"
-    );
-  }
-  catch (_) {
-    showMsg(
-      "No se pudo copiar automáticamente",
-      "error"
-    );
-  }
 }
 
 
@@ -163,7 +166,6 @@ async function loadUsers() {
 
     updateStats();
 
-
     userRows.innerHTML =
       usersCache.length
         ? usersCache
@@ -179,7 +181,6 @@ async function loadUsers() {
 
                     <td>
                       <div class="cell-title">
-
                         <strong>
                           ${esc(user.nombre)}
                         </strong>
@@ -187,10 +188,8 @@ async function loadUsers() {
                         <span class="cell-sub">
                           Perfil gestionado desde el portal
                         </span>
-
                       </div>
                     </td>
-
 
                     <td>
                       <span class="badge">
@@ -198,23 +197,18 @@ async function loadUsers() {
                       </span>
                     </td>
 
-
                     <td>
                       <span class="badge">
-
                         ${
                           user.rol ===
                           "administrador"
                             ? "Administrador"
                             : "Usuario"
                         }
-
                       </span>
                     </td>
 
-
                     <td>
-
                       ${
                         user.activo
                           ? `
@@ -228,21 +222,16 @@ async function loadUsers() {
                             </span>
                           `
                       }
-
                     </td>
 
-
                     <td>
-
                       <span class="password-protected">
                         ••••••••
                         <small>
                           protegida
                         </small>
                       </span>
-
                     </td>
-
 
                     <td class="user-actions">
 
@@ -261,7 +250,6 @@ async function loadUsers() {
                         Editar
                       </button>
 
-
                       <button
                         class="btn btn-secondary btn-sm"
                         type="button"
@@ -273,7 +261,6 @@ async function loadUsers() {
                       >
                         🔑 Contraseña
                       </button>
-
 
                       <button
                         class="
@@ -299,15 +286,12 @@ async function loadUsers() {
                             : ""
                         }
                       >
-
                         ${
                           user.activo
                             ? "Desactivar"
                             : "Activar"
                         }
-
                       </button>
-
 
                       ${
                         !isCurrentUser
@@ -345,6 +329,7 @@ async function loadUsers() {
           </tr>
         `;
   }
+
   catch (error) {
     userRows.innerHTML = `
       <tr>
@@ -389,6 +374,7 @@ async function toggleUser(
 
     await loadUsers();
   }
+
   catch (error) {
     showMsg(
       error.message,
@@ -412,17 +398,14 @@ async function deleteUser(userId) {
     return;
   }
 
-
   const confirmed =
     confirm(
       `¿Eliminar permanentemente al usuario "${user.nombre}" (${user.username})?\n\nEsta acción no se puede deshacer.`
     );
 
-
   if (!confirmed) {
     return;
   }
-
 
   try {
     await apiDelete(
@@ -435,6 +418,7 @@ async function deleteUser(userId) {
 
     await loadUsers();
   }
+
   catch (error) {
     showMsg(
       error.message,
@@ -454,7 +438,6 @@ userForm.addEventListener(
 
     event.preventDefault();
 
-
     const body = {
       nombre:
         user_nombre.value.trim(),
@@ -465,7 +448,6 @@ userForm.addEventListener(
       rol:
         user_rol.value
     };
-
 
     try {
 
@@ -483,14 +465,17 @@ userForm.addEventListener(
         );
 
       }
+
       else {
 
-        body.password =
+        const passwordTemporal =
           user_password.value;
+
+        body.password =
+          passwordTemporal;
 
         body.activo =
           true;
-
 
         const result =
           await apiPost(
@@ -498,21 +483,23 @@ userForm.addEventListener(
             body
           );
 
-
         closeUserForm();
-
 
         showAssignedCredential(
           result.usuario,
-          result.password_asignada
+          passwordTemporal
+        );
+
+        showMsg(
+          "Usuario creado correctamente"
         );
 
       }
 
-
       await loadUsers();
 
     }
+
     catch (error) {
 
       showMsg(
@@ -536,38 +523,37 @@ passwordForm.addEventListener(
 
     event.preventDefault();
 
-
     if (!passwordTarget) {
       return;
     }
 
-
     try {
+
+      const passwordTemporal =
+        new_password.value;
 
       const result =
         await apiPatch(
           `/api/usuarios/${passwordTarget.id}/password`,
           {
             password:
-              new_password.value
+              passwordTemporal
           }
         );
 
-
       closePasswordModal();
-
 
       showAssignedCredential(
         result.usuario,
-        result.password_asignada
+        passwordTemporal
       );
 
-
       showMsg(
-        "Contraseña actualizada"
+        "Contraseña actualizada correctamente"
       );
 
     }
+
     catch (error) {
 
       showMsg(
@@ -592,7 +578,6 @@ passwordForm.addEventListener(
       "usuarios"
     );
 
-
   if (
     !currentUser ||
     currentUser.rol !==
@@ -600,7 +585,6 @@ passwordForm.addEventListener(
   ) {
     return;
   }
-
 
   await loadUsers();
 
